@@ -4,6 +4,9 @@ import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 
+// Define BASE_URL
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
 export default function AdminOrders() {
   const { token } = useAuth();
   const [orders, setOrders] = useState([]);
@@ -18,7 +21,7 @@ export default function AdminOrders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const { data } = await axios.get("/api/admin/orders", {
+        const { data } = await axios.get(`${BASE_URL}/admin/orders`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrders(data);
@@ -34,7 +37,7 @@ export default function AdminOrders() {
   const updateOrderStatus = async (orderId, status) => {
     setActionId(orderId);
     try {
-      await axios.patch(`/api/orders/${orderId}/${status}`, {}, {
+      await axios.patch(`${BASE_URL}/orders/${orderId}/${status}`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success(`Order ${status}`);
@@ -104,6 +107,7 @@ export default function AdminOrders() {
         </div>
       </div>
 
+      {/* Orders List */}
       {filteredOrders.length === 0 ? (
         <div className="text-center text-gray-500 mt-20">
           😢 No orders match the selected filters.
@@ -119,7 +123,6 @@ export default function AdminOrders() {
               className="border rounded-2xl p-5 shadow-md bg-white/80 backdrop-blur"
             >
               <div className="flex justify-between flex-wrap gap-6">
-                {/* Order Info */}
                 <div className="text-sm space-y-1 text-gray-800">
                   <p><strong>🆔 Order ID:</strong> {order._id}</p>
                   <p><strong>👤 User:</strong> {order.user?.name} ({order.user?.email})</p>
@@ -139,7 +142,6 @@ export default function AdminOrders() {
                   <p><strong>🕒 Placed On:</strong> {new Date(order.createdAt).toLocaleString()}</p>
                 </div>
 
-                {/* Action Buttons */}
                 {order.status === "Pending" && (
                   <div className="flex gap-3 items-start">
                     <button
@@ -160,7 +162,6 @@ export default function AdminOrders() {
                 )}
               </div>
 
-              {/* Shipping Info */}
               <div className="mt-4 text-sm text-gray-700">
                 <p className="font-medium mb-1">🚚 Shipping Info:</p>
                 <ul className="list-disc pl-6 space-y-1">
@@ -170,7 +171,6 @@ export default function AdminOrders() {
                 </ul>
               </div>
 
-              {/* Items */}
               <div className="mt-4 text-sm text-gray-700">
                 <p className="font-medium mb-1">📦 Items:</p>
                 <ul className="list-disc pl-6 space-y-1">
