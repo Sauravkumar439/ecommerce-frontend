@@ -12,13 +12,16 @@ export default function Products() {
     const fetchProducts = async () => {
       try {
         const { data } = await axios.get("/api/products");
-        console.log("Fetched products:", data); // Debug log
+        console.log("Fetched products:", data);
 
-        // Handle both array and object response
-        if (Array.isArray(data)) {
-          setProducts(data);
-        } else if (Array.isArray(data.products)) {
-          setProducts(data.products);
+        const productsArray = Array.isArray(data)
+          ? data
+          : Array.isArray(data.products)
+          ? data.products
+          : null;
+
+        if (productsArray) {
+          setProducts(productsArray);
         } else {
           toast.error("Unexpected product data format");
         }
