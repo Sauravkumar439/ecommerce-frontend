@@ -6,6 +6,9 @@ import { toast } from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { motion } from "framer-motion";
 
+// ✅ API Base URL support
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+
 export default function AdminEditProduct() {
   const { id } = useParams();
   const { token } = useAuth();
@@ -25,13 +28,13 @@ export default function AdminEditProduct() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`/api/products/${id}`);
+        const { data } = await axios.get(`${BASE_URL}/products/${id}`);
         setFormData({
           title: data.title,
           description: data.description,
           price: data.price,
           category: data.category,
-          image: data.image,
+          image: data.images?.[0] || "",
         });
       } catch (err) {
         toast.error("Failed to fetch product");
@@ -72,11 +75,18 @@ export default function AdminEditProduct() {
     e.preventDefault();
     try {
       setLoading(true);
-      await axios.put(`/api/products/${id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await axios.put(
+        `${BASE_URL}/products/${id}`,
+        {
+          ...formData,
+          images: [formData.image], // ⬅️ fix image format for backend
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       toast.success("Product updated successfully");
       setTimeout(() => {
         navigate("/admin/products");
