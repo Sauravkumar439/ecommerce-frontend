@@ -4,6 +4,9 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
+// ✅ Use environment variable for API base URL
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
 export default function AdminLogin() {
   const { login, user } = useAuth();
   const navigate = useNavigate();
@@ -12,12 +15,6 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // ✅ Dynamic backend URL for dev/prod
-  const backendUrl =
-    import.meta.env.MODE === "development"
-      ? "http://localhost:5000"
-      : "https://ecommerce-backend-vi8k.onrender.com";
 
   useEffect(() => {
     if (user?.isAdmin) {
@@ -32,7 +29,7 @@ export default function AdminLogin() {
 
     try {
       const res = await axios.post(
-        `${backendUrl}/api/auth/login`,
+        `${BASE_URL}/auth/login`,
         { email, password },
         { withCredentials: true }
       );

@@ -4,11 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 
-// ✅ Automatically switch base URL based on dev or prod
-const BASE_URL =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:5000/api"
-    : "/api";
+// ✅ Use VITE_API_BASE_URL from .env
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Login() {
   const { login } = useAuth();
@@ -26,7 +23,7 @@ export default function Login() {
         `${BASE_URL}/auth/login`,
         { email, password },
         {
-          withCredentials: true, // Optional — if backend sets cookies
+          withCredentials: true, // Optional — if using cookies
         }
       );
 

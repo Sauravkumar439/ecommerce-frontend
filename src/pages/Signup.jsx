@@ -4,11 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { motion } from "framer-motion";
 
-// ✅ Automatically switch between local and Netlify/Render
-const BASE_URL =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:5000/api"
-    : "/api";
+// ✅ Use env variable directly
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Signup() {
   const [avatar, setAvatar] = useState(null);
