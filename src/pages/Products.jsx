@@ -12,13 +12,24 @@ export default function Products() {
     const fetchProducts = async () => {
       try {
         const { data } = await axios.get("/api/products");
-        setProducts(data);
+        console.log("Fetched products:", data); // Debug log
+
+        // Handle both array and object response
+        if (Array.isArray(data)) {
+          setProducts(data);
+        } else if (Array.isArray(data.products)) {
+          setProducts(data.products);
+        } else {
+          toast.error("Unexpected product data format");
+        }
       } catch (err) {
         toast.error("Failed to load products");
+        console.error("Error fetching products:", err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchProducts();
   }, []);
 
