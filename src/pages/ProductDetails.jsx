@@ -1,74 +1,83 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
-  const [qty, setQty] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`/api/products/${id}`);
-        setProduct(data);
-      } catch (error) {
-        toast.error("Failed to fetch product.");
+        const { data } = await axios.get(
+          `https://ecommerce-backend-vi8k.onrender.com/api/products/${id}`
+        );
+
+        // Optional: Handle if API wraps data in a product object
+        const productData = data?.product || data;
+        setProduct(productData);
+      } catch (err) {
+        toast.error("Failed to load product");
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existing = cart.find((item) => item._id === product._id);
-    if (existing) {
-      existing.qty += qty;
-    } else {
-      cart.push({ ...product, qty });
-    }
-    localStorage.setItem("cart", JSON.stringify(cart));
-    toast.success("Added to cart");
-  };
+  if (loading) {
+    return <div className="p-6 text-center text-lg">Loading...</div>;
+  }
 
-  if (!product) return <div className="text-center mt-10">Loading...</div>;
+  if (!product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600 text-lg">
+        Product not found.
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-5xl mx-auto p-4 grid md:grid-cols-2 gap-10 items-center">
-      <motion.img
-        src={product.images?.[0]}
-        alt={product.title}
-        className="rounded-xl w-full h-[400px] object-cover shadow-md"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 py-20 px-6 md:px-10 relative overflow-hidden">
+      {/* Background Blurs */}
+      <div className="absolute top-[-60px] right-[-60px] w-72 h-72 bg-indigo-300 opacity-20 rounded-full blur-3xl z-0"></div>
+      <div className="absolute bottom-[-60px] left-[-60px] w-96 h-96 bg-purple-300 opacity-20 rounded-full blur-2xl z-0"></div>
+
       <motion.div
-        initial={{ x: 100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative max-w-7xl mx-auto bg-white rounded-3xl shadow-xl flex flex-col md:flex-row overflow-hidden z-10"
       >
-        <h2 className="text-3xl font-bold mb-4">{product.title}</h2>
-        <p className="text-gray-700 mb-4">{product.description}</p>
-        <p className="text-xl font-semibold text-indigo-600 mb-4">₹{product.price}</p>
-        <div className="mb-4">
-          <label className="mr-2 font-medium">Quantity:</label>
-          <input
-            type="number"
-            min="1"
-            value={qty}
-            onChange={(e) => setQty(Number(e.target.value))}
-            className="w-16 px-2 py-1 border rounded-md"
+        {/* Product Image */}
+        <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-6 md:p-10">
+          <img
+            src={product.images?.[0]}
+            alt={product.title}
+            className="w-full max-h-[500px] object-contain"
           />
         </div>
-        <button
-          onClick={handleAddToCart}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow transition duration-200"
-        >
-          Add to Cart
-        </button>
+
+        {/* Product Details */}
+        <div className="w-full md:w-1/2 px-6 md:px-10 py-8 flex flex-col justify-center">
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">{product.title}</h2>
+          <p className="text-gray-500 text-sm mb-1">Category: {product.category}</p>
+          <p className="text-indigo-600 text-2xl font-semibold mb-6">₹{product.price}</p>
+          <p className="text-gray-600 text-base leading-relaxed mb-8">{product.description}</p>
+
+          <button
+            onClick={() => addToCart(product)}
+            className="bg-indigo-600 hover:bg-indigo-700 transition duration-300 text-white font-medium text-lg py-3 px-6 rounded-xl w-full md:w-fit"
+          >
+            Add to Cart
+          </button>
+        </div>
       </motion.div>
     </div>
   );
