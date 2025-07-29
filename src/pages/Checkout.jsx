@@ -43,13 +43,28 @@ export default function Checkout() {
 
     setLoading(true);
     try {
+      console.log("Placing order with data:", {
+        items: cart.map((item) => ({
+          id: item.id || item._id,
+          title: item.title,
+          image: item.images?.[0],
+          price: item.price,
+          qty: item.qty,
+        })),
+        totalAmount: total,
+        shippingInfo,
+        token,
+      });
+
+      const baseURL = "https://ecommerce-backend-vi8k.onrender.com";
+
       const { data } = await axios.post(
-        "/api/orders",
+        `${baseURL}/api/orders`,
         {
           items: cart.map((item) => ({
             id: item.id || item._id,
             title: item.title,
-            image: item.images?.[0], // ✅ fixed image source
+            image: item.images?.[0], // fixed image source
             price: item.price,
             qty: item.qty,
           })),
@@ -67,7 +82,7 @@ export default function Checkout() {
       clearCart();
       navigate("/success");
     } catch (err) {
-      console.error("Order error:", err);
+      console.error("Order error response:", err.response || err.message);
       toast.error("Failed to place order. Please try again.");
     } finally {
       setLoading(false);
@@ -102,7 +117,10 @@ export default function Checkout() {
       ) : (
         <div className="space-y-6">
           {cart.map((item) => (
-            <div key={item._id || item.id} className="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+            <div
+              key={item._id || item.id}
+              className="bg-white p-4 rounded-lg shadow flex justify-between items-center"
+            >
               <div className="flex items-center gap-4">
                 <img
                   src={item.images?.[0] || "/placeholder.png"}
