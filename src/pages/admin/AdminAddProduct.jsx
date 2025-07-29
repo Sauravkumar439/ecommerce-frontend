@@ -5,6 +5,9 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
+// ✅ Properly configured BASE_URL
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
 export default function AdminAddProduct() {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -51,7 +54,7 @@ export default function AdminAddProduct() {
     e.preventDefault();
     try {
       setLoading(true);
-      await axios.post("/api/products", formData, {
+      await axios.post(`${BASE_URL}/products`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
