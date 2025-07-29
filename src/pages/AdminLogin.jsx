@@ -13,6 +13,11 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Dynamically set backend URL
+  const backendUrl = import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : "https://ecommerce-backend-vi8k.onrender.com"; // 🛑 Replace with your real deployed backend URL
+
   useEffect(() => {
     if (user?.isAdmin) {
       navigate("/admin/dashboard");
@@ -25,7 +30,11 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const res = await axios.post("/api/auth/login", { email, password });
+      const res = await axios.post(
+        `${backendUrl}/api/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
 
       const { user: loggedInUser, token } = res.data;
 
