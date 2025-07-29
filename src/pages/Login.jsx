@@ -16,10 +16,13 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        "/api/auth/login", // ✅ relative path works on both local & Netlify
+        { email, password },
+        {
+          withCredentials: true, // ✅ optional — use if backend sends secure cookies
+        }
+      );
 
       const { token, user } = res.data;
       login(user, token);
