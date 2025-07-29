@@ -26,11 +26,13 @@ export default function Profile() {
   const cloudName = "sauravkumar";
   const uploadPreset = "unsigned_ecommerce";
 
+  const baseURL = "https://ecommerce-backend-vi8k.onrender.com";
+
   useEffect(() => {
     if (!token) return;
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/orders/mine", {
+        const res = await axios.get(`${baseURL}/api/orders/mine`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrders(res.data);
@@ -74,7 +76,7 @@ export default function Profile() {
       }
 
       const res = await axios.put(
-        "http://localhost:5000/api/auth/profile",
+        `${baseURL}/api/auth/profile`,
         {
           avatar: avatarURL,
           oldPassword: oldPassword || undefined,
@@ -216,7 +218,7 @@ export default function Profile() {
               >
                 <div className="flex items-center gap-4">
                   <img
-                    src={item.images}
+                    src={item.images?.[0] || "/placeholder.png"}
                     alt={item.title}
                     className="w-12 h-12 object-cover rounded"
                   />
