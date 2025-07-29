@@ -14,7 +14,8 @@ export default function ProductDetails() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`/api/products/${id}`);
+        const baseURL = import.meta.env.VITE_API_BASE_URL || "";
+        const { data } = await axios.get(`${baseURL}/api/products/${id}`);
         setProduct(data);
       } catch (err) {
         toast.error("Failed to load product");
@@ -53,7 +54,7 @@ export default function ProductDetails() {
         {/* Image Section */}
         <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-6 md:p-10">
           <img
-            src={product.images}
+            src={product.images[0]}
             alt={product.title}
             className="w-full max-h-[500px] object-contain"
           />
