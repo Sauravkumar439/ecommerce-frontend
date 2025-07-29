@@ -17,6 +17,7 @@ export default function ProductDetails() {
         const baseURL = import.meta.env.VITE_API_BASE_URL || "";
         const { data } = await axios.get(`${baseURL}/api/products/${id}`);
         setProduct(data);
+        console.log("Fetched product:", data); // For debugging
       } catch (err) {
         toast.error("Failed to load product");
       } finally {
@@ -54,7 +55,7 @@ export default function ProductDetails() {
         {/* Image Section */}
         <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-6 md:p-10">
           <img
-            src={product.images[0]}
+            src={Array.isArray(product.images) ? product.images[0] : product.images}
             alt={product.title}
             className="w-full max-h-[500px] object-contain"
           />
