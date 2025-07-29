@@ -11,7 +11,10 @@ export default function Products() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get("/api/products");
+        // Use full backend URL here:
+        const { data } = await axios.get(
+          "https://ecommerce-backend-vi8k.onrender.com/api/products"
+        );
         console.log("Fetched products:", data);
 
         const productsArray = Array.isArray(data)
