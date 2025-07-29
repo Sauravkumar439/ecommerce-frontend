@@ -4,7 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-// ✅ Use environment variable for API base URL
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 export default function AdminLogin() {
@@ -34,11 +33,13 @@ export default function AdminLogin() {
         { withCredentials: true }
       );
 
+      console.log("Login response:", res.data);
+
       const { user: loggedInUser, token } = res.data;
 
       if (!loggedInUser?.isAdmin) {
         setError("🚫 Access denied. You are not an admin.");
-        login(null, null);
+        login(null, null); // Clear any login state
         setLoading(false);
         return;
       }
@@ -46,6 +47,7 @@ export default function AdminLogin() {
       login(loggedInUser, token);
       navigate("/admin/dashboard");
     } catch (err) {
+      console.error("Login error:", err);
       const message = err?.response?.data?.error || "Login failed.";
       setError(`❌ ${message}`);
     } finally {
