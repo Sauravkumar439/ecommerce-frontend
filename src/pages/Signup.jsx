@@ -4,6 +4,12 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { motion } from "framer-motion";
 
+// ✅ Automatically switch between local and Netlify/Render
+const BASE_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000/api"
+    : "/api";
+
 export default function Signup() {
   const [avatar, setAvatar] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -49,15 +55,12 @@ export default function Signup() {
         avatarURL = uploadRes.data.secure_url;
       }
 
-      const res = await axios.post(
-        "/api/auth/signup", // ✅ relative path works for Netlify
-        {
-          name,
-          email,
-          password,
-          avatar: avatarURL,
-        }
-      );
+      const res = await axios.post(`${BASE_URL}/auth/signup`, {
+        name,
+        email,
+        password,
+        avatar: avatarURL,
+      });
 
       const { token, user } = res.data;
       login(user, token);

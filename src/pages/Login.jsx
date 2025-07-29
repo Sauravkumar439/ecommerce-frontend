@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 
+// ✅ Automatically switch base URL based on dev or prod
+const BASE_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000/api"
+    : "/api";
+
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -17,10 +23,10 @@ export default function Login() {
 
     try {
       const res = await axios.post(
-        "/api/auth/login", // ✅ relative path works on both local & Netlify
+        `${BASE_URL}/auth/login`,
         { email, password },
         {
-          withCredentials: true, // ✅ optional — use if backend sends secure cookies
+          withCredentials: true, // Optional — if backend sets cookies
         }
       );
 

@@ -13,10 +13,11 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Dynamically set backend URL
-  const backendUrl = import.meta.env.MODE === "development"
-    ? "http://localhost:5000"
-    : "https://ecommerce-backend-vi8k.onrender.com"; // 🛑 Replace with your real deployed backend URL
+  // ✅ Dynamic backend URL for dev/prod
+  const backendUrl =
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5000"
+      : "https://ecommerce-backend-vi8k.onrender.com";
 
   useEffect(() => {
     if (user?.isAdmin) {
@@ -39,7 +40,7 @@ export default function AdminLogin() {
       const { user: loggedInUser, token } = res.data;
 
       if (!loggedInUser?.isAdmin) {
-        setError("Access denied. You are not an admin.");
+        setError("🚫 Access denied. You are not an admin.");
         login(null, null);
         setLoading(false);
         return;
@@ -49,7 +50,7 @@ export default function AdminLogin() {
       navigate("/admin/dashboard");
     } catch (err) {
       const message = err?.response?.data?.error || "Login failed.";
-      setError(message);
+      setError(`❌ ${message}`);
     } finally {
       setLoading(false);
     }
