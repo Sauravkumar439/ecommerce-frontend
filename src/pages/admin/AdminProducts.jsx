@@ -4,6 +4,9 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
+// Base URL from .env
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
 export default function AdminProducts() {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -13,7 +16,7 @@ export default function AdminProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get("/api/products");
+        const { data } = await axios.get(`${BASE_URL}/products`);
         setProducts(data);
       } catch (err) {
         console.error("Failed to fetch products", err);
@@ -29,7 +32,7 @@ export default function AdminProducts() {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      await axios.delete(`/api/products/${productId}`, {
+      await axios.delete(`${BASE_URL}/products/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -50,7 +53,6 @@ export default function AdminProducts() {
     <div className="p-6 min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-indigo-800">🛒 All Products</h2>
-        
       </div>
 
       {products.length === 0 ? (
