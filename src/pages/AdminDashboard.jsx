@@ -4,6 +4,8 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
 export default function AdminDashboard() {
   const { token, user } = useAuth();
   const navigate = useNavigate();
@@ -28,10 +30,10 @@ export default function AdminDashboard() {
       setLoading(true);
 
       const [ordersRes, statsRes] = await Promise.all([
-        axios.get("/api/admin/orders", {
+        axios.get(`${BASE_URL}/admin/orders`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("/api/admin/stats", {
+        axios.get(`${BASE_URL}/admin/stats`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -48,7 +50,7 @@ export default function AdminDashboard() {
 
   const confirmOrder = async (orderId) => {
     try {
-      await axios.patch(`/api/orders/${orderId}/confirm`, {}, {
+      await axios.patch(`${BASE_URL}/orders/${orderId}/confirm`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchData();
